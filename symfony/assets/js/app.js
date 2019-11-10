@@ -11,7 +11,12 @@ require('webpack-jquery-ui/css');
 require('jquery-validation');
 
 $(function() {
-    $('.date-class').datepicker({ dateFormat: 'yy-mm-dd'});
+    $('.date-class').datepicker({
+        dateFormat: 'yy-mm-dd',
+        onSelect: function () {
+            $(this).change();
+        }
+    });
 });
 
 $.validator.addMethod("synchronousRemote", function (value, element, param) {
@@ -70,6 +75,10 @@ $.validator.addMethod("synchronousRemote", function (value, element, param) {
     return valid;
 }, "Company symbol not found.");
 
+$.validator.addMethod('customDate', function(value, element) {
+    return this.optional(element) || /^\d\d\d\d-\d\d-\d\d$/.test(value);
+}, "Please specify the date in YYYY-MM-DD format");
+
 const renderError = function (labelFor, errorText) {
     let label = $('label[for="'+ labelFor +'"]');
     let input =$('input#' + labelFor);
@@ -97,6 +106,21 @@ const renderError = function (labelFor, errorText) {
 };
 
 $( "#company_form" ).validate({
+    onkeyup: function(element, event) {
+        var t = this;
+        setTimeout(function() {
+            // this is the default function
+            var excludedKeys = [
+                16, 17, 18, 20, 35, 36, 37,
+                38, 39, 40, 45, 144, 225
+            ];
+            if (event.which === 9 && t.elementValue(element) === "" || $.inArray(event.keyCode, excludedKeys) !== -1) {
+                return;
+            } else if (element.name in t.submitted || element.name in t.invalid) {
+                t.element(element);
+            } // end default
+        }, 3000);  // 3-second delay
+    },
     rules: {
         'company_form_filter[symbol]': {
             required: true,
@@ -113,6 +137,14 @@ $( "#company_form" ).validate({
         'company_form_filter[email]': {
             required: true,
             email: true
+        },
+        'company_form_filter[start_date]': {
+            required: true,
+            customDate: true,
+        },
+        'company_form_filter[end_date]': {
+            required: true,
+            customDate: true,
         },
     },
     errorPlacement: function(error, element) {
@@ -151,7 +183,7 @@ $(document).ready(function ($) {
     });
 });
 
-jQuery('#company_form').on('input', function () {
+jQuery('#company_form').on('input change', function () {
     $(this).find('span.invalid-feedback').remove();
     $(this).find('.is-invalid').removeClass('is-invalid');
 });
