@@ -1,0 +1,12 @@
+{% extends 'base.html.twig' %}
+
+{% block main %}
+    {{ form_start(form, {'attr': {'class': 'form-group', 'id': 'company_form'}}) }}
+            {{ form_row(form.symbol, {'attr': { 'id': 'symbol'}}) }}
+            {{ form_row(form.start_date, {'attr': {'class': 'date-class ignore'}}) }}
+            {{ form_row(form.end_date, {'attr' : {'class': 'date-class ignore'}}) }}
+            {{ form_row(form.email, {'attr': {'class': 'foo'}}) }}
+    {{ form_end(form) }}
+{% endblock %}
+
+
