@@ -7,7 +7,7 @@
   },
   "dependencies": {
     "chart.js": "^2.9.2",
-    "jquery": "^3.4.1",
+    "jquery": "^3.5.0",
     "jquery-datepicker": "^1.12.3",
     "jquery-validation": "^1.19.1"
   }
